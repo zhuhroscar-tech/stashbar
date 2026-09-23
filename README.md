@@ -11,6 +11,11 @@ are just tucked out of sight until you open the lid, and the drawer opens
 **downward** (never sideways) so it never fights the same scarce horizontal
 space that caused the problem in the first place.
 
+The 🗃 drawer icon sits in the menu bar; everything to its immediate left is
+the stash zone, covered by a strip that blends into the bar's own material:
+
+![StashBar's drawer icon and stash zone in the menu bar](docs/closed.png)
+
 ## The problem
 
 Notched MacBooks (14"/16" MacBook Pro, and the notch itself on any Mac with a
