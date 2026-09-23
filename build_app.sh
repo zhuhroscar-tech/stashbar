@@ -28,8 +28,22 @@ if [ -f Resources/AppIcon.icns ]; then
     cp Resources/AppIcon.icns "${APP_DIR}/Contents/Resources/AppIcon.icns"
 fi
 
-echo "==> Ad-hoc code signing"
-codesign --force --deep --sign - "${APP_DIR}"
+echo "==> Code signing with stable local dev identity"
+# Uses a persistent self-signed codesigning identity (created once, stored
+# in the login keychain) instead of ad-hoc ("-") signing. Ad-hoc signing has
+# no stable identity, so macOS assigns a brand-new TCC entry on every
+# rebuild -- forcing Accessibility/Screen Recording to be re-granted after
+# every single code change. A stable identity keeps the same permission
+# grants across rebuilds. (Self-signed certs aren't policy-trusted, so they
+# won't show up in `security find-identity -v -p codesigning`; check the
+# raw keychain listing instead, which is what codesign itself consults.)
+SIGN_IDENTITY="StashBar Local Dev"
+if ! security find-certificate -c "$SIGN_IDENTITY" ~/Library/Keychains/login.keychain-db >/dev/null 2>&1; then
+    echo "    (fallback: stable identity not found in keychain, signing ad-hoc)"
+    codesign --force --deep --sign - "${APP_DIR}"
+else
+    codesign --force --deep --sign "$SIGN_IDENTITY" "${APP_DIR}"
+fi
 
 echo "==> Installing to ${INSTALL_DIR}"
 if [ -d "${INSTALL_DIR}" ]; then

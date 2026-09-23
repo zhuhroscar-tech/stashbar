@@ -1,10 +1,11 @@
 import Cocoa
 
-/// A borderless, always-on-top window that visually occludes a strip of the
-/// menu bar. It sits above the system status-bar window level so any status
-/// items positioned underneath it (icons dragged there by the user) are
-/// covered — they keep running, they're just visually hidden, exactly like
-/// putting a running process "in storage" instead of quitting it.
+/// A borderless, always-on-top window that visually occludes the stash
+/// zone in the real menu bar. Matches the menu bar's own vibrancy material
+/// so it reads as "part of the bar," not a slapped-on rectangle.
+///
+/// It never intercepts clicks (`ignoresMouseEvents = true`): it's a pure
+/// visual cover, so it can never interfere with the icons underneath.
 final class CoverWindow: NSWindow {
 
     init() {
@@ -17,32 +18,23 @@ final class CoverWindow: NSWindow {
         isOpaque = false
         backgroundColor = .clear
         hasShadow = false
-        ignoresMouseEvents = true // never intercept clicks; it's a pure visual cover
+        ignoresMouseEvents = true
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
-        // One above .statusBar so the cover sits directly on top of status
-        // items (which live at .statusBar), fully occluding them.
+        // CGWindowLayer 26 -- one above the status-item layer (25) so it
+        // reliably paints over any icon sitting in the stash zone.
         level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 1)
 
         let effect = NSVisualEffectView()
-        effect.material = .menu // matches the live menu bar's own vibrancy/material
+        effect.material = .menu
         effect.blendingMode = .behindWindow
         effect.state = .active
         contentView = effect
     }
 
-    /// Repositions the cover to sit directly under the given screen frame's
-    /// menu bar, spanning `width` points immediately to the left of `rightEdgeX`.
     func reposition(onScreen screen: NSScreen, rightEdgeX: CGFloat, width: CGFloat) {
-        let barHeight = screen.frame.maxY - screen.visibleFrame.maxY == 0
-            ? NSStatusBar.system.thickness
-            : max(NSStatusBar.system.thickness, screen.frame.maxY - screen.visibleFrame.maxY)
+        let barHeight = max(NSStatusBar.system.thickness, screen.frame.maxY - screen.visibleFrame.maxY)
         let topY = screen.frame.maxY
-        let frame = NSRect(
-            x: rightEdgeX - width,
-            y: topY - barHeight,
-            width: width,
-            height: barHeight
-        )
+        let frame = NSRect(x: rightEdgeX - width, y: topY - barHeight, width: width, height: barHeight)
         setFrame(frame, display: true)
     }
 }

@@ -1,31 +1,31 @@
 import Foundation
 
-/// Small persisted-settings wrapper. Kept separate so the drawer logic
-/// doesn't scatter UserDefaults keys everywhere.
+/// Small persisted-settings wrapper.
 enum Preferences {
     private static let defaults = UserDefaults.standard
 
     private enum Key {
-        static let hiddenWidth = "StashBar.hiddenWidth"
+        static let zoneWidth = "StashBar.zoneWidth"
         static let launchAtLogin = "StashBar.launchAtLogin"
-        static let autoCloseSeconds = "StashBar.autoCloseSeconds"
+        static let autoRecoverSeconds = "StashBar.autoRecoverSeconds"
     }
 
-    static let minWidth: CGFloat = 60
-    static let maxWidth: CGFloat = 1200
-    static let step: CGFloat = 32
+    static let minZoneWidth: CGFloat = 60
+    static let maxZoneWidth: CGFloat = 1200
+    static let zoneStep: CGFloat = 32
 
-    /// Width (in points) of the "hidden zone" immediately left of the
-    /// separator icon. Icons the user cmd-drags into this zone get
-    /// visually covered when the drawer is closed.
-    static var hiddenWidth: CGFloat {
+    /// Width (points) of the stash zone immediately left of the drawer icon.
+    /// Any other app's status icon that ends up inside this x-range (the
+    /// user cmd-drags it there, the same native gesture macOS already uses
+    /// to reorder menu-bar icons) is treated as "stashed": visually covered
+    /// and listed in the drawer panel.
+    static var zoneWidth: CGFloat {
         get {
-            let stored = defaults.double(forKey: Key.hiddenWidth)
-            return stored == 0 ? 220 : CGFloat(stored)
+            let stored = defaults.double(forKey: Key.zoneWidth)
+            return stored == 0 ? 260 : CGFloat(stored)
         }
         set {
-            let clamped = min(max(newValue, minWidth), maxWidth)
-            defaults.set(Double(clamped), forKey: Key.hiddenWidth)
+            defaults.set(Double(min(max(newValue, minZoneWidth), maxZoneWidth)), forKey: Key.zoneWidth)
         }
     }
 
@@ -34,12 +34,13 @@ enum Preferences {
         set { defaults.set(newValue, forKey: Key.launchAtLogin) }
     }
 
-    /// Seconds the drawer stays open before auto re-closing. 0 = never auto-close.
-    static var autoCloseSeconds: Double {
+    /// Seconds after a forwarded click before the stash zone is covered
+    /// again automatically (also re-covers immediately on any other click).
+    static var autoRecoverSeconds: Double {
         get {
-            if defaults.object(forKey: Key.autoCloseSeconds) == nil { return 6 }
-            return defaults.double(forKey: Key.autoCloseSeconds)
+            if defaults.object(forKey: Key.autoRecoverSeconds) == nil { return 1.2 }
+            return defaults.double(forKey: Key.autoRecoverSeconds)
         }
-        set { defaults.set(newValue, forKey: Key.autoCloseSeconds) }
+        set { defaults.set(newValue, forKey: Key.autoRecoverSeconds) }
     }
 }
