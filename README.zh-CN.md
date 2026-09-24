@@ -39,6 +39,8 @@ StashBar 在菜单栏加一个小抽屉图标（🗃）。它左边的一段区�
 
 需要 macOS 14 及以上，以及 Xcode 命令行工具（PATH 里要有 `swift`）。
 
+当前源码版本：`v2.0.2`。版本记录见 [CHANGELOG.md](CHANGELOG.md)。
+
 ```bash
 git clone https://github.com/zhuhroscar-tech/stashbar.git
 cd stashbar
@@ -52,9 +54,9 @@ make install
 上面的方式从终端运行 `make install` 就不会触发同样的拦截；如果还是被拦，在 Finder
 里右键这个 App → 打开，允许一次即可。
 
-打包脚本使用一个稳定的本地开发签名身份（首次运行时自动在你的登录钥匙串里创建一次），
-而不是每次都用临时的 ad-hoc 签名——这样每次改代码重新编译后，下面提到的辅助功能/
-屏幕录制授权都不会失效，只需要授权一次。
+如果登录钥匙串里已经有名为 `StashBar Local Dev` 的本地签名身份，打包脚本会使用它，
+这样每次改代码重新编译后，下面提到的辅助功能/屏幕录制授权都不会失效。若没有这个身份，
+脚本会退回到 ad-hoc 签名，macOS 可能会在重建后再次要求授权。
 
 ## 使用方法
 
@@ -110,4 +112,4 @@ make check   # 测试 + release 编译
 
 ## 许可证
 
-MIT
+[MIT](LICENSE)

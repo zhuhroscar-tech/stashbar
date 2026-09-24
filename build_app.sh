@@ -29,8 +29,8 @@ if [ -f Resources/AppIcon.icns ]; then
 fi
 
 echo "==> Code signing with stable local dev identity"
-# Uses a persistent self-signed codesigning identity (created once, stored
-# in the login keychain) instead of ad-hoc ("-") signing. Ad-hoc signing has
+# Uses a persistent self-signed codesigning identity when one already exists
+# in the login keychain instead of ad-hoc ("-") signing. Ad-hoc signing has
 # no stable identity, so macOS assigns a brand-new TCC entry on every
 # rebuild -- forcing Accessibility/Screen Recording to be re-granted after
 # every single code change. A stable identity keeps the same permission

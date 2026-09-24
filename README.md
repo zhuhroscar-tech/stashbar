@@ -51,6 +51,9 @@ to it.
 
 Requires macOS 14+ and Xcode Command Line Tools (`swift` on your PATH).
 
+Current source release: `v2.0.2`. See [CHANGELOG.md](CHANGELOG.md) for
+release history.
+
 ```bash
 git clone https://github.com/zhuhroscar-tech/stashbar.git
 cd stashbar
@@ -66,10 +69,11 @@ may show an "unidentified developer" prompt — run `make install` from the
 terminal (as above) and macOS won't gate it the same way; if it still does,
 right-click the app in Finder → Open, once.
 
-The build script signs with a stable local development identity (created
-once in your login keychain) instead of ad-hoc signing, so rebuilding after
-a code change does **not** reset the Accessibility/Screen Recording grants
-you make below — you only grant them once.
+If a local code-signing identity named `StashBar Local Dev` already exists in
+your login keychain, the build script uses it so rebuilding after a code
+change does **not** reset the Accessibility/Screen Recording grants you make
+below. If that identity is absent, the script falls back to ad-hoc signing and
+macOS may ask for those grants again after a rebuild.
 
 ## Usage
 
@@ -138,4 +142,4 @@ touches a real window, a real screen, or your actual mouse cursor.
 
 ## License
 
-MIT
+[MIT](LICENSE)
