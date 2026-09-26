@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds StashBar.app from the SwiftPM release binary and installs it to /Applications.
+# Builds StashBar.app from the SwiftPM release binary.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -7,6 +7,7 @@ APP_NAME="StashBar"
 BUILD_CONFIG="release"
 APP_DIR="dist/${APP_NAME}.app"
 INSTALL_DIR="/Applications/${APP_NAME}.app"
+PACKAGE_ONLY="${STASHBAR_PACKAGE_ONLY:-0}"
 
 echo "==> Building ${BUILD_CONFIG} binary"
 swift build -c "${BUILD_CONFIG}"
@@ -42,7 +43,15 @@ if ! security find-certificate -c "$SIGN_IDENTITY" ~/Library/Keychains/login.key
     echo "    (fallback: stable identity not found in keychain, signing ad-hoc)"
     codesign --force --deep --sign - "${APP_DIR}"
 else
-    codesign --force --deep --sign "$SIGN_IDENTITY" "${APP_DIR}"
+    if ! codesign --force --deep --sign "$SIGN_IDENTITY" "${APP_DIR}"; then
+        echo "    (fallback: stable identity exists but codesign could not use it, signing ad-hoc)"
+        codesign --force --deep --sign - "${APP_DIR}"
+    fi
+fi
+
+if [ "$PACKAGE_ONLY" = "1" ]; then
+    echo "==> Package-only build complete at ${APP_DIR}"
+    exit 0
 fi
 
 echo "==> Installing to ${INSTALL_DIR}"

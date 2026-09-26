@@ -24,5 +24,11 @@ jobs:
       - name: Build release binary
         run: swift build -c release
 
+      - name: Package signed app bundle
+        run: STASHBAR_PACKAGE_ONLY=1 ./build_app.sh
+
+      - name: Verify packaged app signature
+        run: codesign --verify --deep --strict dist/StashBar.app
+
       - name: Check whitespace
         run: git diff --check

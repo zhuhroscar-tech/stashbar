@@ -39,7 +39,7 @@ StashBar 在菜单栏加一个小抽屉图标（🗃）。它左边的一段区�
 
 需要 macOS 14 及以上，以及 Xcode 命令行工具（PATH 里要有 `swift`）。
 
-当前源码版本：`v2.0.2`。版本记录见 [CHANGELOG.md](CHANGELOG.md)。
+当前源码版本：`v2.0.3`。版本记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ```bash
 git clone https://github.com/zhuhroscar-tech/stashbar.git
@@ -56,7 +56,8 @@ make install
 
 如果登录钥匙串里已经有名为 `StashBar Local Dev` 的本地签名身份，打包脚本会使用它，
 这样每次改代码重新编译后，下面提到的辅助功能/屏幕录制授权都不会失效。若没有这个身份，
-脚本会退回到 ad-hoc 签名，macOS 可能会在重建后再次要求授权。
+脚本会退回到 ad-hoc 签名，macOS 可能会在重建后再次要求授权。如果这个身份存在但当前
+非交互 shell 或 CI runner 无法使用它，脚本同样会退回到 ad-hoc 签名。
 
 ## 使用方法
 
@@ -101,7 +102,8 @@ make install
 
 ```bash
 make test    # 纯逻辑单元测试：暂存区判定、面板尺寸计算、事件字段
-make check   # 测试 + release 编译
+make package # 编译并签名 dist/StashBar.app，但不安装、不启动
+make check   # 测试 + 仅打包的 app 构建
 ```
 
 测试套件（`swift-testing`，无需安装 Xcode）覆盖了过去必须手动操作真实菜单栏才能

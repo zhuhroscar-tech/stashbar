@@ -51,7 +51,7 @@ to it.
 
 Requires macOS 14+ and Xcode Command Line Tools (`swift` on your PATH).
 
-Current source release: `v2.0.2`. See [CHANGELOG.md](CHANGELOG.md) for
+Current source release: `v2.0.3`. See [CHANGELOG.md](CHANGELOG.md) for
 release history.
 
 ```bash
@@ -73,7 +73,9 @@ If a local code-signing identity named `StashBar Local Dev` already exists in
 your login keychain, the build script uses it so rebuilding after a code
 change does **not** reset the Accessibility/Screen Recording grants you make
 below. If that identity is absent, the script falls back to ad-hoc signing and
-macOS may ask for those grants again after a rebuild.
+macOS may ask for those grants again after a rebuild. The script also falls
+back to ad-hoc signing if that identity exists but cannot be used by the
+current non-interactive shell or CI runner.
 
 ## Usage
 
@@ -129,7 +131,8 @@ this locks in (`panelGrowsDownwardNotSideways`).
 
 ```bash
 make test    # pure-logic unit tests: zone math, panel sizing, event fields
-make check   # tests + a release build
+make package # build and sign dist/StashBar.app without installing or launching
+make check   # tests + a package-only app build
 ```
 
 The test suite (`swift-testing`, no Xcode required) covers the parts that

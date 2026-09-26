@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.3 - 2026-09-26
+
+- Add a package-only build mode so CI and local checks can assemble and sign
+  `dist/StashBar.app` without installing to `/Applications` or launching the
+  app.
+- Extend CI and `make check` to verify the packaged app bundle, not just the
+  raw Swift release binary.
+- Fall back to ad-hoc signing when the stable local signing identity exists but
+  is not usable from a non-interactive shell or CI runner.
+
 ## 2.0.2 - 2026-09-24
 
 - Correct the app bundle version metadata so `CFBundleShortVersionString` and
